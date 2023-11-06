@@ -7,7 +7,7 @@ import logger from "../utils/logger";
 
 class Users extends Model<UsersInterface> implements UsersInterface {
   declare id: number;
-  declare user_id: string | undefined;
+  declare user_id: string;
   declare username: string;
   declare email: string;
   declare password: string;

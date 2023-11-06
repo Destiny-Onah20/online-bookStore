@@ -12,15 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.verifyUser = exports.singUpUser = void 0;
+exports.updateUserProfile = exports.loginUser = exports.verifyUser = exports.singUpUser = void 0;
 const users_model_1 = __importDefault(require("../models/users.model"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const uuid_1 = require("uuid");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mailservice_1 = __importDefault(require("../middlewares/mailservice"));
 const mailgenerator_1 = __importDefault(require("../utils/mailgenerator"));
+const generate_token_1 = require("../helpers/generate.token");
 const singUpUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
@@ -31,6 +31,7 @@ const singUpUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 message: "Email already taken!"
             });
         }
+        ;
         // hash the password
         const hashPassword = yield bcrypt_1.default.hash(password, 10);
         const userData = {
@@ -42,14 +43,8 @@ const singUpUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         //create an instance of the data 
         const userInstanceData = new users_model_1.default(userData);
         // generate a token for the user
-        const generateToken = jsonwebtoken_1.default.sign({
-            user_id: userInstanceData.user_id,
-            email: userInstanceData.email
-        }, process.env.SECRET_KEY, {
-            expiresIn: '1d'
-        });
         //save the token to the database 
-        userInstanceData.token = generateToken;
+        userInstanceData.token = (0, generate_token_1.generateUserToken)(userInstanceData.user_id, userInstanceData.username);
         yield userInstanceData.save();
         const verifyToken = () => {
             const digits = '0123456789';
@@ -151,13 +146,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         ;
-        const generateToken = jsonwebtoken_1.default.sign({
-            user_id: user.user_id,
-            email: user.email
-        }, process.env.SECRET_KEY, {
-            expiresIn: '1d'
-        });
-        user.token = generateToken;
+        user.token = (0, generate_token_1.generateUserToken)(user.user_id, user.username);
         yield user.save();
         return res.status(200).json({
             message: "Success!",
@@ -172,3 +161,16 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.loginUser = loginUser;
+const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { profileImage, username, email } = req.body;
+        const token = req.params.token;
+    }
+    catch (error) {
+        res.status(500).json({
+            message: error.message,
+            status: "Failed",
+        });
+    }
+});
+exports.updateUserProfile = updateUserProfile;

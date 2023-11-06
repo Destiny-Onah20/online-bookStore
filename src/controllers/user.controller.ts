@@ -9,6 +9,7 @@ import { UsersInterface } from "../interfaces/users.interface";
 import MailService from "../middlewares/mailservice";
 import { Content } from "mailgen";
 import mailGenerator from "../utils/mailgenerator";
+import { generateUserToken } from "../helpers/generate.token";
 
 
 export const singUpUser: RequestHandler = async (req, res) => {
@@ -20,7 +21,8 @@ export const singUpUser: RequestHandler = async (req, res) => {
       return res.status(400).json({
         message: "Email already taken!"
       })
-    }
+    };
+
     // hash the password
     const hashPassword = await bcrypt.hash(password, 10);
     const userData: UsersInterface = {
@@ -32,14 +34,9 @@ export const singUpUser: RequestHandler = async (req, res) => {
     //create an instance of the data 
     const userInstanceData = new Users(userData);
     // generate a token for the user
-    const generateToken = jsonwebtoken.sign({
-      user_id: userInstanceData.user_id,
-      email: userInstanceData.email
-    }, <string>process.env.SECRET_KEY, {
-      expiresIn: '1d'
-    });
+
     //save the token to the database 
-    userInstanceData.token = generateToken;
+    userInstanceData.token = generateUserToken(userInstanceData.user_id, userInstanceData.username);
     await userInstanceData.save();
 
     const verifyToken = () => {
@@ -155,13 +152,7 @@ export const loginUser: RequestHandler = async (req, res) => {
         message: "Please verify your email first!"
       })
     };
-    const generateToken = jsonwebtoken.sign({
-      user_id: user.user_id,
-      email: user.email
-    }, <string>process.env.SECRET_KEY, {
-      expiresIn: '1d'
-    });
-    user.token = generateToken;
+    user.token = generateUserToken(user.user_id, user.username);
     await user.save();
 
     return res.status(200).json({
@@ -178,3 +169,17 @@ export const loginUser: RequestHandler = async (req, res) => {
 }
 
 
+export const updateUserProfile: RequestHandler = async (req, res) => {
+  try {
+    const { profileImage, username, email } = req.body;
+    const token = req.params.token;
+
+
+
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+      status: "Failed",
+    })
+  }
+}

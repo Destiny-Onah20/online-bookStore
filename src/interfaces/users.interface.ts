@@ -1,6 +1,6 @@
 export interface UsersInterface {
   id?: number;
-  user_id?: string;
+  user_id: string;
   username: string;
   email: string;
   password: string;
@@ -17,4 +17,10 @@ export interface userInputInterface {
   username: string;
   email: string;
   password: string;
+}
+
+
+export interface PayLoad {
+  user_id: string;
+  username: string;
 }
