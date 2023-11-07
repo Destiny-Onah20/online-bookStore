@@ -23,7 +23,7 @@ const generateAdminToken = (typeOfAdmin, socialMediaHandle, isAdmin, verified) =
         username: socialMediaHandle,
         isAdmin: isAdmin,
         verification: verified
-    }, process.env.SECRET_KEY, {
+    }, process.env.SECRET_KEY_AD, {
         expiresIn: process.env.EXPIRE_TIME_AD
     });
     return adminToken;

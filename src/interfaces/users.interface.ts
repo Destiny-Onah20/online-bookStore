@@ -1,3 +1,5 @@
+import { Request } from "express"
+
 export interface UsersInterface {
   id?: number;
   user_id: string;
@@ -21,6 +23,10 @@ export interface userInputInterface {
 
 
 export interface PayLoad {
-  user_id: string;
-  username: string;
+  email: string;
+  id: number;
+}
+
+export interface IGetUserAuthInfoRequest extends Request {
+  user: any // or any other type
 }

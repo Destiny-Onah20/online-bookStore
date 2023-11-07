@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminInputSchema = void 0;
+exports.adminLoginInput = exports.adminInputSchema = void 0;
 const zod_1 = require("zod");
 exports.adminInputSchema = (0, zod_1.object)({
     fullName: (0, zod_1.string)({
@@ -22,6 +22,14 @@ exports.adminInputSchema = (0, zod_1.object)({
     aboutAuthor: (0, zod_1.string)({
         required_error: "Please tell us about your self😜!"
     }).nonempty().min(2, "Please explain with better information"),
+    password: (0, zod_1.string)({
+        required_error: "Password is required"
+    }).nonempty().min(7, "Password must be at least 7 characters long")
+});
+exports.adminLoginInput = (0, zod_1.object)({
+    email: (0, zod_1.string)({
+        required_error: "Email is required"
+    }).nonempty().email("Invalid Email format!"),
     password: (0, zod_1.string)({
         required_error: "Password is required"
     }).nonempty().min(7, "Password must be at least 7 characters long")

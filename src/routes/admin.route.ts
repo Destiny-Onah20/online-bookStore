@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { registerAuthors } from "../controllers/admin.controller";
-import { validateAdmin } from "../middlewares/validations";
-import { adminInputSchema } from "../schemas/admin.schema";
+import { loginAdmin, registerAuthors, verifyAdmin } from "../controllers/admin.controller";
+import { validateAdmin, validateAdminLogin } from "../middlewares/validations";
+import { adminInputSchema, adminLoginInput } from "../schemas/admin.schema";
 
 
 const adminRouter = Router();
 
 adminRouter.route("/admin").post(validateAdmin(adminInputSchema), registerAuthors);
+adminRouter.route("/admin/login").post(validateAdminLogin(adminLoginInput), loginAdmin);
+adminRouter.route("/admin").put(verifyAdmin);
 
-export default adminRouter;
+export default adminRouter;  

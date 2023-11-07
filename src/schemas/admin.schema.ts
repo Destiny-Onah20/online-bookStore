@@ -1,5 +1,5 @@
 import { ZodObject, ZodSchema, object, string } from "zod";
-import { AdminInput, AdminOptions } from "../interfaces/admin.interface";
+import { AdminInput, AdminLoginInput, AdminOptions } from "../interfaces/admin.interface";
 
 export const adminInputSchema: ZodSchema<AdminInput> = object({
   fullName: string({
@@ -26,3 +26,13 @@ export const adminInputSchema: ZodSchema<AdminInput> = object({
     required_error: "Password is required"
   }).nonempty().min(7, "Password must be at least 7 characters long")
 });
+
+
+export const adminLoginInput: ZodSchema<AdminLoginInput> = object({
+  email: string({
+    required_error: "Email is required"
+  }).nonempty().email("Invalid Email format!"),
+  password: string({
+    required_error: "Password is required"
+  }).nonempty().min(7, "Password must be at least 7 characters long")
+})

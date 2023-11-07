@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerAuthors = void 0;
+exports.verifyAdmin = exports.loginAdmin = exports.registerAuthors = void 0;
 const admin_model_1 = __importDefault(require("../models/admin.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generate_token_1 = require("../helpers/generate.token");
@@ -95,3 +95,65 @@ const registerAuthors = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.registerAuthors = registerAuthors;
+const loginAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email, password } = req.body;
+        const validEmailAddress = yield admin_model_1.default.findOne({ where: { email } });
+        if (!validEmailAddress) {
+            return res.status(404).json({
+                message: "Email address not found!"
+            });
+        }
+        const validPasswordMatch = yield bcrypt_1.default.compare(password, validEmailAddress.password);
+        if (!validPasswordMatch) {
+            return res.status(404).json({
+                message: "Incorrect password!"
+            });
+        }
+        ;
+        const verifiedAdmin = validEmailAddress.verified;
+        if (!verifiedAdmin) {
+            return res.status(400).json({
+                message: "Please verify your email address to continue..."
+            });
+        }
+        ;
+        const generateNewToken = yield (0, generate_token_1.generateAdminToken)(validEmailAddress.typeOfAdmin, validEmailAddress.socialMediaHandle, validEmailAddress.isAdmin, validEmailAddress.verified);
+        validEmailAddress.token = generateNewToken;
+        yield validEmailAddress.save();
+        return res.status(200).json({
+            message: "Login successful!",
+            token: generateNewToken
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+            status: "Failed!"
+        });
+    }
+});
+exports.loginAdmin = loginAdmin;
+const verifyAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { verificationCode } = req.body;
+        const theVerificationCode = yield admin_model_1.default.findOne({ where: { verifyNumber: verificationCode } });
+        if (!theVerificationCode) {
+            return res.status(400).json({
+                message: "Invalid verification code!"
+            });
+        }
+        theVerificationCode.verified = true;
+        yield theVerificationCode.save();
+        return res.status(201).json({
+            message: "Success!",
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: error.message,
+            status: "Failed",
+        });
+    }
+});
+exports.verifyAdmin = verifyAdmin;

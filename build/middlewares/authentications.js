@@ -12,32 +12,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticatedUser = void 0;
+exports.authenticatedAdmin = exports.authenticatedUser = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const users_model_1 = __importDefault(require("../models/users.model"));
+const admin_model_1 = __importDefault(require("../models/admin.model"));
 const authenticatedUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { token } = req.params;
-        const registeredToken = yield users_model_1.default.findOne({
+        const { userId } = req.params;
+        const registeredUser = yield users_model_1.default.findOne({
             where: {
-                token: token
+                id: userId
             }
         });
-        if (!registeredToken) {
+        if (!registeredUser) {
             return res.status(401).json({
                 message: "Unauthorized token"
             });
         }
         ;
-        const authenticToken = registeredToken.token;
+        const authenticToken = registeredUser.token;
         jsonwebtoken_1.default.verify(authenticToken, process.env.SECRET_KEY, (err, payLoad) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 return res.status(401).json({
-                    message: err.message
+                    message: "Please login "
                 });
             }
             else {
-                const payLoadResponse = payLoad;
+                req.user = payLoad;
                 next();
             }
         }));
@@ -50,3 +51,37 @@ const authenticatedUser = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.authenticatedUser = authenticatedUser;
+const authenticatedAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { adminId } = req.params;
+        const registeredAdmin = yield admin_model_1.default.findOne({
+            where: {
+                id: adminId
+            }
+        });
+        if (!registeredAdmin) {
+            return res.status(401).json({
+                message: "Unauthorized token"
+            });
+        }
+        ;
+        const authenticToken = registeredAdmin.token;
+        jsonwebtoken_1.default.verify(authenticToken, process.env.SECRET_KEY_AD, (err, payLoad) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(401).json({
+                    message: "Please login "
+                });
+            }
+            else {
+                next();
+            }
+        }));
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+            status: "Failed",
+        });
+    }
+});
+exports.authenticatedAdmin = authenticatedAdmin;

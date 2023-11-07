@@ -41,3 +41,8 @@ export interface AdminInput {
   aboutAuthor: string;
   password: string;
 }
+
+export interface AdminLoginInput {
+  email: string;
+  password: string;
+}

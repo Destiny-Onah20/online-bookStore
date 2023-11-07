@@ -98,3 +98,74 @@ export const registerAuthors: RequestHandler = async (req, res) => {
     })
   }
 };
+
+
+export const loginAdmin: RequestHandler = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const validEmailAddress = await Admin.findOne({ where: { email } });
+    if (!validEmailAddress) {
+      return res.status(404).json({
+        message: "Email address not found!"
+      })
+    }
+
+    const validPasswordMatch = await bcrypt.compare(password, validEmailAddress.password);
+    if (!validPasswordMatch) {
+      return res.status(404).json({
+        message: "Incorrect password!"
+      })
+    };
+
+    const verifiedAdmin = validEmailAddress.verified;
+    if (!verifiedAdmin) {
+      return res.status(400).json({
+        message: "Please verify your email address to continue..."
+      })
+    };
+
+    const generateNewToken = await generateAdminToken(validEmailAddress.typeOfAdmin,
+      validEmailAddress.socialMediaHandle,
+      validEmailAddress.isAdmin,
+      validEmailAddress.verified);
+    validEmailAddress.token = generateNewToken;
+    await validEmailAddress.save();
+
+    return res.status(200).json({
+      message: "Login successful!",
+      token: generateNewToken
+    })
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message,
+      status: "Failed!"
+    })
+  }
+};
+
+
+export const verifyAdmin: RequestHandler = async (req, res) => {
+  try {
+    const { verificationCode } = req.body;
+    const theVerificationCode = await Admin.findOne({ where: { verifyNumber: verificationCode } });
+    if (!theVerificationCode) {
+      return res.status(400).json({
+        message: "Invalid verification code!"
+      })
+    }
+
+    theVerificationCode.verified = true;
+    await theVerificationCode.save();
+
+    return res.status(201).json({
+      message: "Success!",
+    })
+
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+      status: "Failed",
+    })
+  }
+};

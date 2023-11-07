@@ -1,33 +1,66 @@
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import Users from "../models/users.model";
 import Admin from "../models/admin.model";
-import { PayLoad } from "../interfaces/users.interface";
-import { RequestHandler } from "express";
+import { IGetUserAuthInfoRequest, PayLoad } from "../interfaces/users.interface";
+import { NextFunction, RequestHandler, Request, Response } from "express";
+import { decodeAdminToken } from "../helpers/jwt.token";
+import { AdminInterface } from "../interfaces/admin.interface";
 
-export const authenticatedUser: RequestHandler = async (req, res, next) => {
+export const authenticatedUser = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   try {
-    const { token } = req.params;
-    const registeredToken = await Users.findOne({
+    const { userId } = req.params;
+    const registeredUser = await Users.findOne({
       where: {
-        token: token
+        id: userId
       }
     });
-    if (!registeredToken) {
+    if (!registeredUser) {
       return res.status(401).json({
         message: "Unauthorized token"
       })
     };
 
-    const authenticToken = registeredToken.token;
-    jwt.verify(authenticToken, <string>process.env.SECRET_KEY, async (err, payLoad) => {
+    const authenticToken = registeredUser.token;
+    jwt.verify(authenticToken, <string>process.env.SECRET_KEY as Secret, async (err, payLoad) => {
       if (err) {
         return res.status(401).json({
-          message: err.message
+          message: "Please login "
         });
       } else {
-        const payLoadResponse = payLoad as PayLoad;
+        req.user = payLoad
+        next()
+      }
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message,
+      status: "Failed",
+    })
+  }
+}
 
-        next();
+export const authenticatedAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { adminId } = req.params;
+    const registeredAdmin = await Admin.findOne({
+      where: {
+        id: adminId
+      }
+    });
+    if (!registeredAdmin) {
+      return res.status(401).json({
+        message: "Unauthorized token"
+      })
+    };
+
+    const authenticToken = registeredAdmin.token;
+    jwt.verify(authenticToken, <string>process.env.SECRET_KEY_AD as Secret, async (err, payLoad) => {
+      if (err) {
+        return res.status(401).json({
+          message: "Please login "
+        });
+      } else {
+        next()
       }
     });
   } catch (error: any) {

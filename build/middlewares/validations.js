@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateAdmin = exports.validateUserInput = void 0;
+exports.validateAdminLogin = exports.validateAdmin = exports.validateUserInput = void 0;
 const zod_1 = require("zod");
 const schemaObj = zod_1.z.object({
     body: zod_1.z.object({}),
@@ -64,3 +64,27 @@ const validateAdmin = (schema) => (req, res, next) => __awaiter(void 0, void 0, 
     }
 });
 exports.validateAdmin = validateAdmin;
+const validateAdminLogin = (schema) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        schemaObj.parse({
+            body: req.body,
+            query: req.query,
+            params: req.params,
+        });
+        yield schema.parseAsync(req.body);
+        next();
+    }
+    catch (error) {
+        if (error instanceof zod_1.ZodError) {
+            const theExpectedZodErrorMessage = error.errors.map((error) => error.message);
+            return res.status(400).json({
+                message: theExpectedZodErrorMessage[0]
+            });
+        }
+        return res.status(500).json({
+            message: error.message,
+            status: "zod Failed",
+        });
+    }
+});
+exports.validateAdminLogin = validateAdminLogin;

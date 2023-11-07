@@ -20,7 +20,7 @@ export const generateAdminToken = (typeOfAdmin: string, socialMediaHandle: strin
     username: socialMediaHandle,
     isAdmin: isAdmin,
     verification: verified
-  }, <string>process.env.SECRET_KEY, {
+  }, <string>process.env.SECRET_KEY_AD, {
     expiresIn: <string>process.env.EXPIRE_TIME_AD
   })
 
