@@ -24,6 +24,7 @@
     "mailgen": "^2.0.27",
     "mysql2": "^3.6.2",
     "nodemailer": "^6.9.6",
+    "pg": "^8.11.3",
     "pug": "^3.0.2",
     "sequelize": "^6.33.0",
     "sequelize-cli": "^6.6.1",

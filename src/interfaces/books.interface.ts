@@ -22,3 +22,10 @@ export interface BookInputInterface {
   price: number;
   stock: number;
 }
+
+export interface BookInputInterfaceSchema {
+  title: string;
+  description: string;
+  price: string;
+  stock: string;
+}

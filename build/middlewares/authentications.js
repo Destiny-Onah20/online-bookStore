@@ -61,7 +61,7 @@ const authenticatedAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0,
         });
         if (!registeredAdmin) {
             return res.status(401).json({
-                message: "Unauthorized token"
+                message: "Signup as a Vendor to access this route please🙏."
             });
         }
         ;
