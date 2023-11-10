@@ -1,5 +1,5 @@
 import sequelize from "../configs/config";
-import { Model, DataTypes, Optional } from "sequelize";
+import { Model, DataTypes, Optional, Op } from "sequelize";
 import { BookInterface } from "../interfaces/books.interface";
 import logger from "../utils/logger";
 import Admin from "./admin.model";
@@ -14,10 +14,31 @@ class Book extends Model<BookInterface, BookOptionalInterfaces> implements BookI
   declare author: string;
   declare bookImage: string;
   declare cloudId: string;
+  declare pdfFile: string;
+  declare pdfCloudId: string;
   declare price: number;
   declare stock: number;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+  public static search(query: string): Promise<Book[]> {
+    return Book.findAll({
+      where: {
+        [Op.or]: [
+          {
+            title: {
+              [Op.like]: `%${query}%`,
+            },
+          },
+          {
+            author: {
+              [Op.like]: `%${query}%`,
+            },
+          }
+        ],
+      },
+    })
+  }
 };
 
 Book.init({
@@ -50,6 +71,14 @@ Book.init({
   cloudId: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  pdfFile: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  pdfCloudId: {
+    type: DataTypes.STRING,
+    allowNull: true
   },
   price: {
     type: DataTypes.INTEGER,

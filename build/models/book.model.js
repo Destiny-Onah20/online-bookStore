@@ -7,6 +7,24 @@ const config_1 = __importDefault(require("../configs/config"));
 const sequelize_1 = require("sequelize");
 const admin_model_1 = __importDefault(require("./admin.model"));
 class Book extends sequelize_1.Model {
+    static search(query) {
+        return Book.findAll({
+            where: {
+                [sequelize_1.Op.or]: [
+                    {
+                        title: {
+                            [sequelize_1.Op.like]: `%${query}%`,
+                        },
+                    },
+                    {
+                        author: {
+                            [sequelize_1.Op.like]: `%${query}%`,
+                        },
+                    }
+                ],
+            },
+        });
+    }
 }
 ;
 Book.init({
@@ -39,6 +57,14 @@ Book.init({
     cloudId: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
+    },
+    pdfFile: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true
+    },
+    pdfCloudId: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true
     },
     price: {
         type: sequelize_1.DataTypes.INTEGER,

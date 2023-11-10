@@ -38,7 +38,6 @@ const authenticatedUser = (req, res, next) => __awaiter(void 0, void 0, void 0, 
                 });
             }
             else {
-                req.user = payLoad;
                 next();
             }
         }));

@@ -10,6 +10,7 @@ const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const user_route_1 = __importDefault(require("./routes/user.route"));
 const admin_route_1 = __importDefault(require("./routes/admin.route"));
 const book_route_1 = __importDefault(require("./routes/book.route"));
+const order_route_1 = __importDefault(require("./routes/order.route"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
@@ -21,6 +22,7 @@ app.set('view', path_1.default.join(__dirname, 'public'));
 app.use("/api/v1", user_route_1.default);
 app.use("/api/v1", admin_route_1.default);
 app.use("/api/v1", book_route_1.default);
+app.use("/api/v1", order_route_1.default);
 app.all("*", (req, res) => {
     res.status(404).json({
         message: `This Route ${req.originalUrl} does not exist on this Server`

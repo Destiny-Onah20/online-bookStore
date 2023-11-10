@@ -12,14 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.singleBook = exports.allBooks = exports.uploadAbook = void 0;
+exports.searchForBooks = exports.deleteAbook = exports.singleBook = exports.allBooks = exports.uploadAbook = void 0;
 const book_model_1 = __importDefault(require("../models/book.model"));
 const admin_model_1 = __importDefault(require("../models/admin.model"));
+const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
 const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const adminId = req.params.adminId;
         const AdminDetails = yield admin_model_1.default.findAll({ where: { id: adminId } });
-        const { title, description, price, stock, bookImage, cloudId } = req.body;
+        const { title, description, price, stock, bookImage, cloudId, pdfFile, pdfCloudId } = req.body;
         const bookData = {
             title,
             description,
@@ -28,6 +29,8 @@ const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             price: Number(price),
             stock: Number(stock),
             bookImage,
+            pdfFile,
+            pdfCloudId,
             cloudId
         };
         const publishBook = yield book_model_1.default.create(bookData);
@@ -85,8 +88,58 @@ const singleBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     catch (error) {
         return res.status(500).json({
-            message: error.message
+            message: error.messageufn
         });
     }
 });
 exports.singleBook = singleBook;
+const deleteAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookId = req.params.bookId;
+        const book = yield book_model_1.default.findByPk(bookId);
+        const adminId = req.params.adminId;
+        if (!book) {
+            return res.status(404).json({
+                message: "Book not found."
+            });
+        }
+        const vendor = book.adminId;
+        if (vendor !== parseInt(adminId)) {
+            return res.status(400).json({
+                message: "Not permitted to delete this book."
+            });
+        }
+        yield cloudinary_1.default.uploader.destroy(book.cloudId);
+        yield book_model_1.default.destroy({ where: { id: bookId } });
+        return res.status(202).json({
+            message: "Book deleted successfully."
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+});
+exports.deleteAbook = deleteAbook;
+const searchForBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { searchValue } = req.body;
+        const searchResult = yield book_model_1.default.search(searchValue);
+        if (searchResult.length < 1) {
+            return res.status(200).json({
+                message: `No result for your search currently.`
+            });
+        }
+        return res.status(200).json({
+            message: `Search result for ${searchValue}`,
+            data: searchResult
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+});
+exports.searchForBooks = searchForBooks;

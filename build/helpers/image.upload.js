@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadBookImage = void 0;
+exports.uploadBookPdf = exports.uploadBookImage = void 0;
 const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
 const uploadBookImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -38,3 +38,34 @@ const uploadBookImage = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.uploadBookImage = uploadBookImage;
+const uploadBookPdf = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    try {
+        const file = (_b = req.files) === null || _b === void 0 ? void 0 : _b.pdfFile;
+        if (!file) {
+            next();
+        }
+        const uploads = Array.isArray(file) ? file : [file];
+        for (const file of uploads) {
+            const result = yield cloudinary_1.default.uploader.upload(file.tempFilePath, (err, payload) => {
+                if (err) {
+                    return res.status(400).json({
+                        message: err.message
+                    });
+                }
+                else {
+                    return payload;
+                }
+            });
+            req.body.pdfFile = result.secure_url;
+            req.body.pdfCloudId = result.public_id;
+        }
+        next();
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+});
+exports.uploadBookPdf = uploadBookPdf;

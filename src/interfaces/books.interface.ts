@@ -4,6 +4,8 @@ export interface BookInterface {
   title: string;
   description: string;
   author: string;
+  pdfFile: string;
+  pdfCloudId: string;
   bookImage: string;
   cloudId: string;
   price: number;
@@ -18,6 +20,8 @@ export interface BookInputInterface {
   description: string;
   author: string;
   bookImage: string;
+  pdfFile: string;
+  pdfCloudId: string;
   cloudId: string;
   price: number;
   stock: number;

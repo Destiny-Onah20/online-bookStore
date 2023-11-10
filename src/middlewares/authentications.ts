@@ -6,7 +6,7 @@ import { NextFunction, RequestHandler, Request, Response } from "express";
 import { decodeAdminToken } from "../helpers/jwt.token";
 import { AdminInterface } from "../interfaces/admin.interface";
 
-export const authenticatedUser = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+export const authenticatedUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
     const registeredUser = await Users.findOne({
@@ -27,7 +27,6 @@ export const authenticatedUser = async (req: IGetUserAuthInfoRequest, res: Respo
           message: "Please login "
         });
       } else {
-        req.user = payLoad
         next()
       }
     });
