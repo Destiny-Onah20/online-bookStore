@@ -2,6 +2,7 @@ import sequelize from "../configs/config";
 import { FullOrderBody } from "../interfaces/orderitems.interface";
 import { Model, DataTypes, Optional } from "sequelize";
 import Users from "./users.model";
+import logger from "../utils/logger";
 
 
 type fullOrderOptions = Optional<FullOrderBody, "createdAt" | "updatedAt" | "orderItemId">;
@@ -49,7 +50,7 @@ OrderItems.belongsTo(Users, { foreignKey: "customerId" });
 Users.hasMany(OrderItems, { foreignKey: "customerId" });
 
 
-// Order.sync({ alter: true }).then(() => {
+// OrderItems.sync({ alter: true }).then(() => {
 //   logger.info("Order Table created!")
 // }).catch((error) => {
 //   logger.info(error.message)

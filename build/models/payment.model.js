@@ -4,24 +4,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../configs/config"));
+const orderItem_model_1 = __importDefault(require("../models/orderItem.model"));
+const logger_1 = __importDefault(require("../utils/logger"));
 const sequelize_1 = require("sequelize");
-const users_model_1 = __importDefault(require("./users.model"));
-class OrderItems extends sequelize_1.Model {
+class Payment extends sequelize_1.Model {
 }
-OrderItems.init({
-    orderItemId: {
+Payment.init({
+    id: {
         type: sequelize_1.DataTypes.INTEGER,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
         allowNull: false
     },
-    customerId: {
+    orderId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
-    totalPrice: {
+    totalAmount: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
+    },
+    status: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: false
     },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
@@ -32,16 +37,16 @@ OrderItems.init({
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
         defaultValue: sequelize_1.DataTypes.NOW
-    },
+    }
 }, {
     sequelize: config_1.default,
-    tableName: "orderItems",
+    tableName: 'payments'
 });
-OrderItems.belongsTo(users_model_1.default, { foreignKey: "customerId" });
-users_model_1.default.hasMany(OrderItems, { foreignKey: "customerId" });
-// OrderItems.sync({ alter: true }).then(() => {
-//   logger.info("Order Table created!")
-// }).catch((error) => {
-//   logger.info(error.message)
-// });
-exports.default = OrderItems;
+Payment.belongsTo(orderItem_model_1.default, { foreignKey: "orderId" });
+orderItem_model_1.default.hasMany(Payment, { foreignKey: "orderId" });
+Payment.sync({ alter: true }).then(() => {
+    logger_1.default.info("Order Table created!");
+}).catch((error) => {
+    logger_1.default.info(error.message);
+});
+exports.default = Payment;
