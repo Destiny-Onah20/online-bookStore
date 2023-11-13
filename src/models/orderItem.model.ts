@@ -5,12 +5,13 @@ import Users from "./users.model";
 import logger from "../utils/logger";
 
 
-type fullOrderOptions = Optional<FullOrderBody, "createdAt" | "updatedAt" | "orderItemId">;
+type fullOrderOptions = Optional<FullOrderBody, "createdAt" | "updatedAt" | "orderItemId" | "processed">;
 
 class OrderItems extends Model<FullOrderBody, fullOrderOptions> implements fullOrderOptions {
   declare orderItemId: number;
   declare customerId: number;
   declare totalPrice: number;
+  declare processed: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -29,6 +30,10 @@ OrderItems.init({
   totalPrice: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  processed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   createdAt: {
     type: DataTypes.DATE,

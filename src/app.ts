@@ -29,7 +29,7 @@ app.use("/api/v1", bookRouter);
 
 app.use("/api/v1", orderRouter);
 
-app.use("/api/v1", itemRoute)
+app.use("/api/v1", itemRoute);
 
 app.all("*", (req: Request, res: Response) => {
   res.status(404).json({

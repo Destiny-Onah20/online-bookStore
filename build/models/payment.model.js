@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../configs/config"));
 const orderItem_model_1 = __importDefault(require("../models/orderItem.model"));
-const logger_1 = __importDefault(require("../utils/logger"));
 const sequelize_1 = require("sequelize");
 class Payment extends sequelize_1.Model {
 }
@@ -28,6 +27,9 @@ Payment.init({
         type: sequelize_1.DataTypes.BOOLEAN,
         defaultValue: false
     },
+    reference: {
+        type: sequelize_1.DataTypes.STRING,
+    },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
@@ -44,9 +46,9 @@ Payment.init({
 });
 Payment.belongsTo(orderItem_model_1.default, { foreignKey: "orderId" });
 orderItem_model_1.default.hasMany(Payment, { foreignKey: "orderId" });
-Payment.sync({ alter: true }).then(() => {
-    logger_1.default.info("Order Table created!");
-}).catch((error) => {
-    logger_1.default.info(error.message);
-});
+// Payment.sync({ alter: true }).then(() => {
+//   logger.info("Order Table created!")
+// }).catch((error) => {
+//   logger.info(error.message)
+// });
 exports.default = Payment;

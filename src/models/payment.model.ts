@@ -11,6 +11,7 @@ class Payment extends Model<paymentInterface, OptionalPaymentFields> implements 
   declare id: number;
   declare orderId: number;
   declare totalAmount: number;
+  declare reference: string;
   declare status: boolean;
   declare createdAt: Date;
   declare updatedAt: Date
@@ -35,6 +36,9 @@ Payment.init({
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
+  reference: {
+    type: DataTypes.STRING,
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -53,10 +57,10 @@ Payment.init({
 Payment.belongsTo(orderItems, { foreignKey: "orderId" });
 orderItems.hasMany(Payment, { foreignKey: "orderId" });
 
-Payment.sync({ alter: true }).then(() => {
-  logger.info("Order Table created!")
-}).catch((error) => {
-  logger.info(error.message)
-});
+// Payment.sync({ alter: true }).then(() => {
+//   logger.info("Order Table created!")
+// }).catch((error) => {
+//   logger.info(error.message)
+// });
 
 export default Payment;

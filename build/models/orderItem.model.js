@@ -23,6 +23,10 @@ OrderItems.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
+    processed: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: false
+    },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
