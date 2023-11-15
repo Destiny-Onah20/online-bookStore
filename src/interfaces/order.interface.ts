@@ -4,6 +4,7 @@ export interface OrderItems {
   adminId: number;
   bookId: number;
   quantity: number;
+  processed: boolean;
   price: number;
   createdAt: Date;
   updatedAt: Date;

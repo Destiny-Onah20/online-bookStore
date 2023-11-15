@@ -40,7 +40,7 @@ export const payForOrder: RequestHandler = async (req, res) => {
         expiry_month: expiryMonth
       },
       email: customer?.email,
-      // currency: "NGN",
+      currency: "NGN",
       amount: order.totalPrice
     }, {
       headers: {
@@ -55,6 +55,9 @@ export const payForOrder: RequestHandler = async (req, res) => {
           const book = await Book.findOne({ where: { id: item.bookId } });
 
           await book?.update({ stock: book?.stock - item.quantity }, { where: { id: item.bookId } })
+          await Order.update({ processed: true }, {
+            where: { id: item.id }
+          })
         })
 
         const paid = await Payment.create({
@@ -67,6 +70,7 @@ export const payForOrder: RequestHandler = async (req, res) => {
         await OrderItems.update({ processed: true }, {
           where: { orderItemId }
         })
+
 
         return res.status(201).json({
           message: "Payment successful.",

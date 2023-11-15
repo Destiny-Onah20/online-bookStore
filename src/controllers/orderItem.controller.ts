@@ -18,6 +18,11 @@ export const getOrderByUser: RequestHandler = async (req, res) => {
         message: "Order details is currently empty."
       })
     }
+
+    order.filter(async (item) => {
+      const book = await Order.findByPk(item.id);
+      book?.processed === true
+    })
     const totalPrice = order.reduce((sum, order) => sum + order.price, 0);
     const orderItems = await OrderItems.create({
       customerId: Number(customerId),

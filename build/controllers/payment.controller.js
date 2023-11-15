@@ -62,6 +62,9 @@ const payForOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 orderBook.map((item) => __awaiter(void 0, void 0, void 0, function* () {
                     const book = yield book_model_1.default.findOne({ where: { id: item.bookId } });
                     yield (book === null || book === void 0 ? void 0 : book.update({ stock: (book === null || book === void 0 ? void 0 : book.stock) - item.quantity }, { where: { id: item.bookId } }));
+                    yield order_model_1.default.update({ processed: true }, {
+                        where: { id: item.id }
+                    });
                 }));
                 const paid = yield payment_model_1.default.create({
                     status: true,

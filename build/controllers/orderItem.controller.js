@@ -26,6 +26,10 @@ const getOrderByUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 message: "Order details is currently empty."
             });
         }
+        order.filter((item) => __awaiter(void 0, void 0, void 0, function* () {
+            const book = yield order_model_1.default.findByPk(item.id);
+            (book === null || book === void 0 ? void 0 : book.processed) === true;
+        }));
         const totalPrice = order.reduce((sum, order) => sum + order.price, 0);
         const orderItems = yield orderItem_model_1.default.create({
             customerId: Number(customerId),

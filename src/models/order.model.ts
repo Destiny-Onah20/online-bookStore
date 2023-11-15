@@ -5,12 +5,13 @@ import { OrderItems } from "../interfaces/order.interface"
 import Admin from "./admin.model";
 import Users from "./users.model";
 
-type orderOptionals = Optional<OrderItems, "id" | "createdAt" | "updatedAt">;
+type orderOptionals = Optional<OrderItems, "id" | "createdAt" | "updatedAt" | "processed">;
 
 class Order extends Model<OrderItems, orderOptionals> implements OrderItems {
   declare id: number;
   declare customerId: number;
   declare adminId: number;
+  declare processed: boolean;
   declare bookId: number;
   declare quantity: number;
   declare price: number;
@@ -33,6 +34,10 @@ Order.init({
   adminId: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  processed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   },
   bookId: {
     type: DataTypes.INTEGER,

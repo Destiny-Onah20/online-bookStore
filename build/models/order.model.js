@@ -24,6 +24,10 @@ Order.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
+    processed: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: true
+    },
     bookId: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
