@@ -3,6 +3,7 @@ import Book from "../models/book.model";
 import { BookInputInterface } from "../interfaces/books.interface";
 import Admin from "../models/admin.model";
 import Cloudinary from "../utils/cloudinary";
+import redis from "../utils/caching";
 
 
 export const uploadAbook: RequestHandler = async (req, res) => {
@@ -39,12 +40,21 @@ export const uploadAbook: RequestHandler = async (req, res) => {
 
 export const allBooks: RequestHandler = async (req, res) => {
   try {
+    const cachedValue = await redis.get("all");
+    if (cachedValue) {
+      return res.status(200).json({
+        message: "Success",
+        length: cachedValue.length,
+        data: JSON.parse(cachedValue).reverse()
+      })
+    }
     const books = await Book.findAll();
     if (books.length < 0) {
       return res.status(200).json({
         message: "Books not available"
       })
     } else {
+      await redis.set("all", JSON.stringify(books));
       return res.status(200).json({
         message: "Success",
         length: books.length,
@@ -62,16 +72,26 @@ export const allBooks: RequestHandler = async (req, res) => {
 export const singleBook: RequestHandler = async (req, res) => {
   try {
     const bookId = req.params.bookId;
+
+    const cachedValue = await redis.get(bookId);
+    if (cachedValue) {
+      return res.status(200).json({
+        message: "Success",
+        data: cachedValue
+      })
+    }
+
     const books = await Book.findAll({ where: { id: bookId } });
     if (books.length < 0) {
       return res.status(200).json({
         message: "Books not available"
       })
     } else {
+      await redis.set(bookId, JSON.stringify(books));
       return res.status(200).json({
         message: "Success",
         length: books.length,
-        data: books.reverse()[0]
+        data: books
       })
     }
   } catch (error: any) {

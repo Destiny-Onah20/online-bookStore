@@ -47,7 +47,16 @@ const uploadBookPdf = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         }
         const uploads = Array.isArray(file) ? file : [file];
         for (const file of uploads) {
-            const result = yield cloudinary_1.default.uploader.upload(file.tempFilePath, (err, payload) => {
+            const isPdfFile = (filename) => {
+                return filename.endsWith(".pdf");
+            };
+            const filename = file.tempFilePath;
+            if (!isPdfFile(filename)) {
+                return res.status(400).json({
+                    message: "Please you are only allowed to upload a pdf file here."
+                });
+            }
+            const result = yield cloudinary_1.default.uploader.upload(filename, (err, payload) => {
                 if (err) {
                     return res.status(400).json({
                         message: err.message

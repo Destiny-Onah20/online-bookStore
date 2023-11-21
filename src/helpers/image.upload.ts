@@ -36,7 +36,16 @@ export const uploadBookPdf: RequestHandler = async (req, res, next) => {
     }
     const uploads = Array.isArray(file) ? file : [file];
     for (const file of uploads) {
-      const result = await Cloudinary.uploader.upload(file.tempFilePath, (err, payload) => {
+      const isPdfFile = (filename: string): boolean => {
+        return filename.endsWith(".pdf")
+      };
+      const filename = file.tempFilePath;
+      if (!isPdfFile(filename)) {
+        return res.status(400).json({
+          message: "Please you are only allowed to upload a pdf file here."
+        })
+      }
+      const result = await Cloudinary.uploader.upload(filename, (err, payload) => {
         if (err) {
           return res.status(400).json({
             message: err.message

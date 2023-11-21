@@ -49,7 +49,7 @@ const payForOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 expiry_month: expiryMonth
             },
             email: customer === null || customer === void 0 ? void 0 : customer.email,
-            // currency: "NGN",
+            currency: "NGN",
             amount: order.totalPrice
         }, {
             headers: {

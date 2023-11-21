@@ -16,6 +16,7 @@ exports.searchForBooks = exports.deleteAbook = exports.singleBook = exports.allB
 const book_model_1 = __importDefault(require("../models/book.model"));
 const admin_model_1 = __importDefault(require("../models/admin.model"));
 const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
+const caching_1 = __importDefault(require("../utils/caching"));
 const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const adminId = req.params.adminId;
@@ -48,6 +49,14 @@ const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.uploadAbook = uploadAbook;
 const allBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const cachedValue = yield caching_1.default.get("all");
+        if (cachedValue) {
+            return res.status(200).json({
+                message: "Success",
+                length: cachedValue.length,
+                data: JSON.parse(cachedValue).reverse()
+            });
+        }
         const books = yield book_model_1.default.findAll();
         if (books.length < 0) {
             return res.status(200).json({
@@ -55,6 +64,7 @@ const allBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         else {
+            yield caching_1.default.set("all", JSON.stringify(books));
             return res.status(200).json({
                 message: "Success",
                 length: books.length,
@@ -72,6 +82,13 @@ exports.allBooks = allBooks;
 const singleBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.bookId;
+        const cachedValue = yield caching_1.default.get(bookId);
+        if (cachedValue) {
+            return res.status(200).json({
+                message: "Success",
+                data: cachedValue
+            });
+        }
         const books = yield book_model_1.default.findAll({ where: { id: bookId } });
         if (books.length < 0) {
             return res.status(200).json({
@@ -79,10 +96,11 @@ const singleBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             });
         }
         else {
+            yield caching_1.default.set(bookId, JSON.stringify(books));
             return res.status(200).json({
                 message: "Success",
                 length: books.length,
-                data: books.reverse()[0]
+                data: books
             });
         }
     }
