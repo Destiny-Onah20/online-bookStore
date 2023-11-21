@@ -8,7 +8,7 @@
     "start:run": "nodemon build/server.js",
     "start": "concurrently npm:start:*"
   },
-    "engines": {
+  "engines": {
     "node": ">=16.x",
     "npm": "8.5.5"
   },
@@ -48,6 +48,7 @@
     "@types/html-to-text": "^9.0.3",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/nodemailer": "^6.4.13",
-    "@types/pug": "^2.0.8"
+    "@types/pug": "^2.0.8",
+    "nodemon": "^3.0.1"
   }
 }
