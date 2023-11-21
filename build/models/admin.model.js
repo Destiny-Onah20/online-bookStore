@@ -81,7 +81,7 @@ Admin.init({
     },
 }, {
     sequelize: config_1.default,
-    tableName: 'admin'
+    tableName: 'admins'
 });
 // Admin.sync({ alter: true }).then(() => {
 //   logger.info("Table created Success!")

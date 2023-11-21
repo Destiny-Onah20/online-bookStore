@@ -100,7 +100,7 @@ Admin.init({
   },
 }, {
   sequelize,
-  tableName: 'admin'
+  tableName: 'admins'
 });
 
 // Admin.sync({ alter: true }).then(() => {

@@ -16,12 +16,6 @@ const MailService = async (Option: mailInterface) => {
       pass: process.env.PASSWORD
     }
   });
-  const userData = await Users.findOne({ where: { email: Option.email } });
-
-  const html = pug.renderFile(`${__dirname}/../views/email/template.pug`, {
-    verificationNumber: userData?.verifyNumber,
-    username: userData?.username
-  });
 
   const mailOptions = {
     from: {
@@ -30,8 +24,8 @@ const MailService = async (Option: mailInterface) => {
     },
     to: Option.email,
     subject: Option.subject,
-    text: htmlTotext.convert(html),
-    html: html
+    text: Option.message,
+    html: Option.html
   };
   await transporter.sendMail(mailOptions)
 

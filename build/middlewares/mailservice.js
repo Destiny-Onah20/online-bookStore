@@ -13,9 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const pug_1 = __importDefault(require("pug"));
-const users_model_1 = __importDefault(require("../models/users.model"));
-const html_to_text_1 = __importDefault(require("html-to-text"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const MailService = (Option) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,11 +24,6 @@ const MailService = (Option) => __awaiter(void 0, void 0, void 0, function* () {
             pass: process.env.PASSWORD
         }
     });
-    const userData = yield users_model_1.default.findOne({ where: { email: Option.email } });
-    const html = pug_1.default.renderFile(`${__dirname}/../views/email/template.pug`, {
-        verificationNumber: userData === null || userData === void 0 ? void 0 : userData.verifyNumber,
-        username: userData === null || userData === void 0 ? void 0 : userData.username
-    });
     const mailOptions = {
         from: {
             name: "Page.com",
@@ -39,8 +31,8 @@ const MailService = (Option) => __awaiter(void 0, void 0, void 0, function* () {
         },
         to: Option.email,
         subject: Option.subject,
-        text: html_to_text_1.default.convert(html),
-        html: html
+        text: Option.message,
+        html: Option.html
     };
     yield transporter.sendMail(mailOptions);
 });
