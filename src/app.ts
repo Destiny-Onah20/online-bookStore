@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
+import helmet from "helmet";
 import cors from "cors"
 import path from "path";
+import { rateLimit } from "express-rate-limit";
 import fileUpload from "express-fileupload"
 import userRoute from "./routes/user.route";
 import adminRouter from "./routes/admin.route";
@@ -10,10 +12,19 @@ import itemRoute from "./routes/orderItem.router";
 
 const app = express();
 
+app.use(helmet());
 
+const limiter = rateLimit({
+  max: 3,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request from this IP address, Please try again later!"
+})
 
 app.use(express.json());
 app.use(cors());
+
+app.use("/api/v1/admin/login", limiter);
+
 app.use(fileUpload({
   useTempFiles: true
 }))

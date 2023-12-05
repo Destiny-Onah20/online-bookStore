@@ -4,6 +4,7 @@ import { BookInputInterface } from "../interfaces/books.interface";
 import Admin from "../models/admin.model";
 import Cloudinary from "../utils/cloudinary";
 import redis from "../utils/caching";
+import Review from "../models/review.model";
 
 
 export const uploadAbook: RequestHandler = async (req, res) => {
@@ -81,7 +82,10 @@ export const singleBook: RequestHandler = async (req, res) => {
       })
     }
 
-    const books = await Book.findAll({ where: { id: bookId } });
+    const books = await Book.findAll({
+      where: { id: bookId },
+      include: [Review]
+    });
     if (books.length < 0) {
       return res.status(200).json({
         message: "Books not available"

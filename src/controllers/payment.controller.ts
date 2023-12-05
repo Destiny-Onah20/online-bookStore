@@ -16,14 +16,14 @@ export const payForOrder: RequestHandler = async (req, res) => {
     const customerId = req.params.userId;
     const { cardNumber, cvv, pin, expiryYear, expiryMonth } = req.body;
 
-    const order = await OrderItems.findOne({ where: { orderItemId } });
+    const order = await OrderItems.findAll({ where: { orderItemId } });
     if (!order) {
       return res.status(404).json({
         message: "Cannot find the order you want to pay for"
       })
     };
 
-    if (order.processed) {
+    if (order[0].processed) {
       return res.status(400).json({
         message: "Already paid for this order."
       })
@@ -41,7 +41,7 @@ export const payForOrder: RequestHandler = async (req, res) => {
       },
       email: customer?.email,
       currency: "NGN",
-      amount: order.totalPrice
+      amount: order[0].totalPrice
     }, {
       headers: {
         Authorization: `Bearer ${process.env.PAY_SECRET}`
@@ -62,15 +62,12 @@ export const payForOrder: RequestHandler = async (req, res) => {
 
         const paid = await Payment.create({
           status: true,
-          totalAmount: order.totalPrice,
+          totalAmount: order[0].totalPrice,
           orderId: Number(orderItemId),
           reference: response.data.reference
         })
 
-        await OrderItems.update({ processed: true }, {
-          where: { orderItemId }
-        })
-
+        order.filter((items) => items.orderItemId)
 
         return res.status(201).json({
           message: "Payment successful.",

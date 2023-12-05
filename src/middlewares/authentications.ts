@@ -36,7 +36,7 @@ export const authenticatedUser = async (req: Request, res: Response, next: NextF
       status: "Failed",
     })
   }
-}
+};
 
 export const authenticatedAdmin = async (req: Request, res: Response, next: NextFunction) => {
   try {

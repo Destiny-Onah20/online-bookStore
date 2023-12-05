@@ -27,14 +27,14 @@ const payForOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const orderItemId = req.params.orderId;
         const customerId = req.params.userId;
         const { cardNumber, cvv, pin, expiryYear, expiryMonth } = req.body;
-        const order = yield orderItem_model_1.default.findOne({ where: { orderItemId } });
+        const order = yield orderItem_model_1.default.findAll({ where: { orderItemId } });
         if (!order) {
             return res.status(404).json({
                 message: "Cannot find the order you want to pay for"
             });
         }
         ;
-        if (order.processed) {
+        if (order[0].processed) {
             return res.status(400).json({
                 message: "Already paid for this order."
             });
@@ -50,7 +50,7 @@ const payForOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             },
             email: customer === null || customer === void 0 ? void 0 : customer.email,
             currency: "NGN",
-            amount: order.totalPrice
+            amount: order[0].totalPrice
         }, {
             headers: {
                 Authorization: `Bearer ${process.env.PAY_SECRET}`
@@ -68,13 +68,11 @@ const payForOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 }));
                 const paid = yield payment_model_1.default.create({
                     status: true,
-                    totalAmount: order.totalPrice,
+                    totalAmount: order[0].totalPrice,
                     orderId: Number(orderItemId),
                     reference: response.data.reference
                 });
-                yield orderItem_model_1.default.update({ processed: true }, {
-                    where: { orderItemId }
-                });
+                order.filter((items) => items.orderItemId);
                 return res.status(201).json({
                     message: "Payment successful.",
                     data: paid

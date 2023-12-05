@@ -17,6 +17,7 @@ const book_model_1 = __importDefault(require("../models/book.model"));
 const admin_model_1 = __importDefault(require("../models/admin.model"));
 const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
 const caching_1 = __importDefault(require("../utils/caching"));
+const review_model_1 = __importDefault(require("../models/review.model"));
 const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const adminId = req.params.adminId;
@@ -89,7 +90,10 @@ const singleBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 data: cachedValue
             });
         }
-        const books = yield book_model_1.default.findAll({ where: { id: bookId } });
+        const books = yield book_model_1.default.findAll({
+            where: { id: bookId },
+            include: [review_model_1.default]
+        });
         if (books.length < 0) {
             return res.status(200).json({
                 message: "Books not available"
