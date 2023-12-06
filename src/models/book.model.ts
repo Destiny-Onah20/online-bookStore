@@ -13,6 +13,7 @@ class Book extends Model<BookInterface, BookOptionalInterfaces> implements BookI
   declare description: string;
   declare author: string;
   declare bookImage: string;
+  declare category: string;
   declare cloudId: string;
   declare pdfFile: string;
   declare pdfCloudId: string;
@@ -64,6 +65,10 @@ Book.init({
     type: DataTypes.STRING,
     allowNull: false
   },
+  category: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   bookImage: {
     type: DataTypes.STRING,
     allowNull: false
@@ -104,10 +109,10 @@ Book.init({
 Book.belongsTo(Admin, { foreignKey: "adminId" });
 Admin.hasMany(Book, { foreignKey: "adminId" })
 
-// Book.sync({ alter: true }).then(() => {
-//   logger.info("Table created Success!")
-// }).catch((error) => {
-//   logger.error(error.message)
-// });
+Book.sync({ alter: true }).then(() => {
+  logger.info("Table created Success!")
+}).catch((error) => {
+  logger.error(error.message)
+});
 
 export default Book;

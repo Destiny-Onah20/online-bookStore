@@ -66,10 +66,10 @@ Review.belongsToMany(Book, {
 });
 Book.hasMany(Review, { foreignKey: "bookId" });
 
-Review.sync({ alter: true }).then(() => {
-  logger.info("Order Table created!")
-}).catch((error) => {
-  logger.info(error.message)
-});
+// Review.sync({ alter: true }).then(() => {
+//   logger.info("Order Table created!")
+// }).catch((error) => {
+//   logger.info(error.message)
+// });
 
 export default Review;

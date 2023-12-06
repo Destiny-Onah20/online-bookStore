@@ -22,7 +22,7 @@ const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const adminId = req.params.adminId;
         const AdminDetails = yield admin_model_1.default.findAll({ where: { id: adminId } });
-        const { title, description, price, stock, bookImage, cloudId, pdfFile, pdfCloudId } = req.body;
+        const { title, description, price, stock, bookImage, cloudId, pdfFile, pdfCloudId, category } = req.body;
         const bookData = {
             title,
             description,
@@ -33,6 +33,7 @@ const uploadAbook = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             bookImage,
             pdfFile,
             pdfCloudId,
+            category,
             cloudId
         };
         const publishBook = yield book_model_1.default.create(bookData);

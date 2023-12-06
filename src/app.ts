@@ -9,6 +9,7 @@ import adminRouter from "./routes/admin.route";
 import bookRouter from "./routes/book.route";
 import orderRouter from "./routes/order.route";
 import itemRoute from "./routes/orderItem.router";
+import categoryRouter from "./routes/category.route";
 
 const app = express();
 
@@ -41,6 +42,8 @@ app.use("/api/v1", bookRouter);
 app.use("/api/v1", orderRouter);
 
 app.use("/api/v1", itemRoute);
+
+app.use("/api/v1", categoryRouter);
 
 app.all("*", (req: Request, res: Response) => {
   res.status(404).json({

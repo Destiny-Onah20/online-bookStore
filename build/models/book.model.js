@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../configs/config"));
 const sequelize_1 = require("sequelize");
+const logger_1 = __importDefault(require("../utils/logger"));
 const admin_model_1 = __importDefault(require("./admin.model"));
 class Book extends sequelize_1.Model {
     static search(query) {
@@ -50,6 +51,10 @@ Book.init({
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
+    category: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
+    },
     bookImage: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
@@ -88,9 +93,9 @@ Book.init({
 });
 Book.belongsTo(admin_model_1.default, { foreignKey: "adminId" });
 admin_model_1.default.hasMany(Book, { foreignKey: "adminId" });
-// Book.sync({ alter: true }).then(() => {
-//   logger.info("Table created Success!")
-// }).catch((error) => {
-//   logger.error(error.message)
-// });
+Book.sync({ alter: true }).then(() => {
+    logger_1.default.info("Table created Success!");
+}).catch((error) => {
+    logger_1.default.error(error.message);
+});
 exports.default = Book;

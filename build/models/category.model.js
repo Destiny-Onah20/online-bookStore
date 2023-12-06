@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../configs/config"));
 const sequelize_1 = require("sequelize");
-const logger_1 = __importDefault(require("../utils/logger"));
 ;
 class Category extends sequelize_1.Model {
 }
@@ -14,11 +13,12 @@ Category.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
     },
     category: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true,
     },
     updatedAt: {
         type: sequelize_1.DataTypes.DATE,
@@ -32,9 +32,9 @@ Category.init({
     sequelize: config_1.default,
     tableName: "category"
 });
-Category.sync({ alter: true }).then(() => {
-    logger_1.default.info("Order Table created!");
-}).catch((error) => {
-    logger_1.default.info(error.message);
-});
+// Category.sync({ alter: true }).then(() => {
+//   logger.info("Category Table created!")
+// }).catch((error) => {
+//   logger.info(error.message)
+// });
 exports.default = Category;

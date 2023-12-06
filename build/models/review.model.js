@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../configs/config"));
 const sequelize_1 = require("sequelize");
 const book_model_1 = __importDefault(require("./book.model"));
-const logger_1 = __importDefault(require("../utils/logger"));
 ;
 class Review extends sequelize_1.Model {
 }
@@ -50,9 +49,9 @@ Review.belongsToMany(book_model_1.default, {
     through: "id"
 });
 book_model_1.default.hasMany(Review, { foreignKey: "bookId" });
-Review.sync({ alter: true }).then(() => {
-    logger_1.default.info("Order Table created!");
-}).catch((error) => {
-    logger_1.default.info(error.message);
-});
+// Review.sync({ alter: true }).then(() => {
+//   logger.info("Order Table created!")
+// }).catch((error) => {
+//   logger.info(error.message)
+// });
 exports.default = Review;

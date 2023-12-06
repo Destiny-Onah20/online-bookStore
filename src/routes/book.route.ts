@@ -7,7 +7,7 @@ import { bookInputSchema } from "../schemas/book.schema";
 
 const bookRouter = Router();
 
-bookRouter.route("/book/:adminId").post(authenticatedAdmin, validateBookInput(bookInputSchema), uploadBookImage, uploadBookPdf, uploadAbook);
+bookRouter.route("/book/:adminId").post(authenticatedAdmin, validateBookInput(bookInputSchema), uploadBookImage, uploadAbook);
 bookRouter.route("/book").get(allBooks);
 bookRouter.route("/book").post(searchForBooks);
 bookRouter.route("/book/:bookId").get(singleBook);

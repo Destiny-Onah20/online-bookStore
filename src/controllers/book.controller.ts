@@ -11,7 +11,7 @@ export const uploadAbook: RequestHandler = async (req, res) => {
   try {
     const adminId = req.params.adminId;
     const AdminDetails = await Admin.findAll({ where: { id: adminId } });
-    const { title, description, price, stock, bookImage, cloudId, pdfFile, pdfCloudId } = req.body;
+    const { title, description, price, stock, bookImage, cloudId, pdfFile, pdfCloudId, category } = req.body;
 
     const bookData: BookInputInterface = {
       title,
@@ -23,6 +23,7 @@ export const uploadAbook: RequestHandler = async (req, res) => {
       bookImage,
       pdfFile,
       pdfCloudId,
+      category,
       cloudId
     }
     const publishBook = await Book.create(bookData);
