@@ -15,12 +15,17 @@ const book_route_1 = __importDefault(require("./routes/book.route"));
 const order_route_1 = __importDefault(require("./routes/order.route"));
 const orderItem_router_1 = __importDefault(require("./routes/orderItem.router"));
 const category_route_1 = __importDefault(require("./routes/category.route"));
+const billing_route_1 = __importDefault(require("./routes/billing.route"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 const limiter = (0, express_rate_limit_1.rateLimit)({
     max: 3,
     windowMs: 60 * 60 * 1000,
-    message: "Too many request from this IP address, Please try again later!"
+    message: (req, res) => {
+        return res.status(400).json({
+            message: "Too many request from this IP address, Please try again later!"
+        });
+    }
 });
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
@@ -36,6 +41,7 @@ app.use("/api/v1", book_route_1.default);
 app.use("/api/v1", order_route_1.default);
 app.use("/api/v1", orderItem_router_1.default);
 app.use("/api/v1", category_route_1.default);
+app.use("/api/v1", billing_route_1.default);
 app.all("*", (req, res) => {
     res.status(404).json({
         message: `This Route ${req.originalUrl} does not exist on this Server`

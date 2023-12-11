@@ -10,6 +10,7 @@ import bookRouter from "./routes/book.route";
 import orderRouter from "./routes/order.route";
 import itemRoute from "./routes/orderItem.router";
 import categoryRouter from "./routes/category.route";
+import billingRoute from "./routes/billing.route";
 
 const app = express();
 
@@ -18,7 +19,11 @@ app.use(helmet());
 const limiter = rateLimit({
   max: 3,
   windowMs: 60 * 60 * 1000,
-  message: "Too many request from this IP address, Please try again later!"
+  message: (req: Request, res: Response) => {
+    return res.status(400).json({
+      message: "Too many request from this IP address, Please try again later!"
+    })
+  }
 })
 
 app.use(express.json());
@@ -44,6 +49,8 @@ app.use("/api/v1", orderRouter);
 app.use("/api/v1", itemRoute);
 
 app.use("/api/v1", categoryRouter);
+
+app.use("/api/v1", billingRoute);
 
 app.all("*", (req: Request, res: Response) => {
   res.status(404).json({

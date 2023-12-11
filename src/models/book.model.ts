@@ -109,10 +109,10 @@ Book.init({
 Book.belongsTo(Admin, { foreignKey: "adminId" });
 Admin.hasMany(Book, { foreignKey: "adminId" })
 
-Book.sync({ alter: true }).then(() => {
-  logger.info("Table created Success!")
-}).catch((error) => {
-  logger.error(error.message)
-});
+// Book.sync({ alter: true }).then(() => {
+//   logger.info("Table created Success!")
+// }).catch((error) => {
+//   logger.error(error.message)
+// });
 
 export default Book;

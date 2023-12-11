@@ -169,3 +169,26 @@ export const verifyAdmin: RequestHandler = async (req, res) => {
     })
   }
 };
+
+
+export const admin: RequestHandler = async (req, res) => {
+  try {
+    const token = req.params.token;
+    const admin = await Admin.findOne({ where: { token } });
+
+    if (!admin) {
+      return res.status(404).json({
+        message: "token not found"
+      })
+    };
+    return res.status(200).json({
+      success: true,
+      data: admin
+    })
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+      success: false,
+    })
+  }
+}

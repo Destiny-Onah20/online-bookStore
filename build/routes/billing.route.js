@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const billing_controller_1 = require("../controllers/billing.controller");
+const authentications_1 = require("../middlewares/authentications");
+const validations_1 = require("../middlewares/validations");
+const billing_schema_1 = require("../schemas/billing.schema");
+const billingRoute = (0, express_1.Router)();
+billingRoute.route("/billing/:userId").post(authentications_1.authenticatedUser, (0, validations_1.validateBilling)(billing_schema_1.billingInputSchema), billing_controller_1.BillingInfo);
+exports.default = billingRoute;

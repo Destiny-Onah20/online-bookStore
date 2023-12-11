@@ -71,8 +71,6 @@ class categoryController {
     try {
       const requiredCategory = req.params.category;
 
-      console.log(requiredCategory);
-
       const categoryAvailability = await Category.findOne({ where: { category: requiredCategory } });
 
       if (!categoryAvailability) {
@@ -83,7 +81,7 @@ class categoryController {
 
       const categories = await Book.findOne({ where: { category: requiredCategory } });
       if (!categories) {
-        return res.status(200).json({
+        return res.status(400).json({
           message: "Category not found at the moment!"
         })
       }

@@ -90,7 +90,6 @@ class categoryController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const requiredCategory = req.params.category;
-                console.log(requiredCategory);
                 const categoryAvailability = yield category_model_1.default.findOne({ where: { category: requiredCategory } });
                 if (!categoryAvailability) {
                     return res.status(200).json({
@@ -99,7 +98,7 @@ class categoryController {
                 }
                 const categories = yield book_model_1.default.findOne({ where: { category: requiredCategory } });
                 if (!categories) {
-                    return res.status(200).json({
+                    return res.status(400).json({
                         message: "Category not found at the moment!"
                     });
                 }

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyAdmin = exports.loginAdmin = exports.registerAuthors = void 0;
+exports.admin = exports.verifyAdmin = exports.loginAdmin = exports.registerAuthors = void 0;
 const admin_model_1 = __importDefault(require("../models/admin.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generate_token_1 = require("../helpers/generate.token");
@@ -157,3 +157,26 @@ const verifyAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.verifyAdmin = verifyAdmin;
+const admin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = req.params.token;
+        const admin = yield admin_model_1.default.findOne({ where: { token } });
+        if (!admin) {
+            return res.status(404).json({
+                message: "token not found"
+            });
+        }
+        ;
+        return res.status(200).json({
+            success: true,
+            data: admin
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: error.message,
+            success: false,
+        });
+    }
+});
+exports.admin = admin;
