@@ -10,6 +10,6 @@ adminRouter.route("/admin").post(validateAdmin(adminInputSchema), registerAuthor
 adminRouter.route("/admin/login").post(validateAdminLogin(adminLoginInput), loginAdmin);
 adminRouter.route("/admin").put(verifyAdmin);
 
-adminRouter.route("/admin/:token").post(validateAdmin, admin)
+adminRouter.route("/admin/:token").post(validateAdmin, admin);
 
 export default adminRouter;  
