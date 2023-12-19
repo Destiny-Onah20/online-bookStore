@@ -6,6 +6,7 @@ import { generateAdminToken } from "../helpers/generate.token";
 import mailGenerator from "../utils/mailgenerator";
 import { Content } from "mailgen";
 import MailService from "../middlewares/mailservice";
+import sendMail from "../queues/email.queue";
 
 
 export const registerAuthors: RequestHandler = async (req, res) => {
@@ -76,7 +77,7 @@ export const registerAuthors: RequestHandler = async (req, res) => {
     const emailBody = mailGenerator.generate(emailContent);
     const emailText = mailGenerator.generatePlaintext(emailContent);
 
-    MailService({
+    sendMail({
       from: {
         address: <string>process.env.EMAIL
       },
@@ -191,4 +192,4 @@ export const admin: RequestHandler = async (req, res) => {
       success: false,
     })
   }
-}
+};

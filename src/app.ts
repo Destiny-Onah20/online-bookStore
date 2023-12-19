@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import helmet from "helmet";
 import cors from "cors"
 import path from "path";
+import { createBullBoard } from "bull-board";
 import { rateLimit } from "express-rate-limit";
 import fileUpload from "express-fileupload"
 import userRoute from "./routes/user.route";
@@ -11,10 +12,14 @@ import orderRouter from "./routes/order.route";
 import itemRoute from "./routes/orderItem.router";
 import categoryRouter from "./routes/category.route";
 import billingRoute from "./routes/billing.route";
+import sendMail from "./queues/email.queue";
 
 const app = express();
 
 app.use(helmet());
+
+const { router } = createBullBoard([]);
+app.use("/admin/queue", router);
 
 const limiter = rateLimit({
   max: 3,
@@ -24,7 +29,13 @@ const limiter = rateLimit({
       message: "Too many request from this IP address, Please try again later!"
     })
   }
-})
+});
+
+app.post("/send-mail", async (req: Request, res: Response) => {
+  await sendMail(req.body);
+  res.send("ok")
+
+});
 
 app.use(express.json());
 app.use(cors());

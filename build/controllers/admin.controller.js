@@ -17,7 +17,7 @@ const admin_model_1 = __importDefault(require("../models/admin.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generate_token_1 = require("../helpers/generate.token");
 const mailgenerator_1 = __importDefault(require("../utils/mailgenerator"));
-const mailservice_1 = __importDefault(require("../middlewares/mailservice"));
+const email_queue_1 = __importDefault(require("../queues/email.queue"));
 const registerAuthors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { fullName, email, phoneNumber, typeOfAdmin, address, socialMediaHandle, aboutAuthor, password, } = req.body;
@@ -72,7 +72,7 @@ const registerAuthors = (req, res) => __awaiter(void 0, void 0, void 0, function
         };
         const emailBody = mailgenerator_1.default.generate(emailContent);
         const emailText = mailgenerator_1.default.generatePlaintext(emailContent);
-        (0, mailservice_1.default)({
+        (0, email_queue_1.default)({
             from: {
                 address: process.env.EMAIL
             },

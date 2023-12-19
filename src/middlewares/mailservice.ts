@@ -1,12 +1,11 @@
 import nodemailer from "nodemailer";
-import pug from "pug";
-import Users from "../models/users.model";
-import htmlTotext from "html-to-text";
+import { Job } from "bull";
 import dotenv from 'dotenv';
 import mailInterface from "../interfaces/mailservice.interface";
+import { emailQueue } from "../queues/email.queue";
 dotenv.config();
 
-const MailService = async (Option: mailInterface) => {
+const MailService = emailQueue.process(async (job: Job, done) => {
 
   const transporter = nodemailer.createTransport({
     service: process.env.SERVICE,
@@ -17,19 +16,22 @@ const MailService = async (Option: mailInterface) => {
     }
   });
 
-  const mailOptions = {
-    from: {
-      name: "Page.com",
-      address: <string>process.env.EMAIL
-    },
-    to: Option.email,
-    subject: Option.subject,
-    text: Option.message,
-    html: Option.html
-  };
-  await transporter.sendMail(mailOptions)
+  const mail = async (Option: mailInterface) => {
+    const mailOption = {
+      from: {
+        name: "Room",
+        address: <string>process.env.EMAIL
+      },
+      to: Option.email,
+      subject: Option.subject,
+      text: Option.message,
+      html: Option.html
+    }
+    await transporter.sendMail(mailOption);
 
-};
+  }
+}
+
+);
 
 export default MailService;
-

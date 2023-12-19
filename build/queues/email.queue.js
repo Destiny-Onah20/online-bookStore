@@ -12,31 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const nodemailer_1 = __importDefault(require("nodemailer"));
+exports.emailQueue = void 0;
+const bull_1 = __importDefault(require("bull"));
+const bull_board_1 = require("bull-board");
+const bullAdapter_1 = require("bull-board/bullAdapter");
 const dotenv_1 = __importDefault(require("dotenv"));
-const email_queue_1 = require("../queues/email.queue");
 dotenv_1.default.config();
-const MailService = email_queue_1.emailQueue.process((job, done) => __awaiter(void 0, void 0, void 0, function* () {
-    const transporter = nodemailer_1.default.createTransport({
-        service: process.env.SERVICE,
-        secure: false,
-        auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD
-        }
-    });
-    const mail = (Option) => __awaiter(void 0, void 0, void 0, function* () {
-        const mailOption = {
-            from: {
-                name: "Room",
-                address: process.env.EMAIL
-            },
-            to: Option.email,
-            subject: Option.subject,
-            text: Option.message,
-            html: Option.html
-        };
-        yield transporter.sendMail(mailOption);
-    });
-}));
-exports.default = MailService;
+exports.emailQueue = new bull_1.default("email", {
+    redis: process.env.REDIS_UR
+});
+const { setQueues } = (0, bull_board_1.createBullBoard)([]);
+setQueues([
+    new bullAdapter_1.BullAdapter(exports.emailQueue)
+]);
+const sendMail = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    yield exports.emailQueue.add(data, {});
+});
+exports.default = sendMail;
