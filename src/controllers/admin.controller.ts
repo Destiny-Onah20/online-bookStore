@@ -59,6 +59,7 @@ export const registerAuthors: RequestHandler = async (req, res) => {
     adminInstance.token = generateToken;
     await adminInstance.save();
 
+    
     const emailContent: Content = {
       body: {
         name: `${adminInstance.fullName.split(" ")[0]}`,

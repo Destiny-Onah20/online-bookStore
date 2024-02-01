@@ -10,6 +10,7 @@ import MailService from "../middlewares/mailservice";
 import { Content } from "mailgen";
 import mailGenerator from "../utils/mailgenerator";
 import { generateUserToken } from "../helpers/generate.token";
+import mailSender from "../middlewares/mailservice";
 
 
 export const singUpUser: RequestHandler = async (req, res) => {
@@ -77,8 +78,10 @@ export const singUpUser: RequestHandler = async (req, res) => {
     };
     const emailBody = mailGenerator.generate(emailContent);
     const emailText = mailGenerator.generatePlaintext(emailContent);
+    const mailService = new mailSender();
+    mailService.createConnection();
 
-    MailService({
+    mailService.mail({
       from: {
         address: <string>process.env.EMAIL
       },

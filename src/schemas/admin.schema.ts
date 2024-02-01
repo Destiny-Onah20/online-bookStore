@@ -35,4 +35,4 @@ export const adminLoginInput: ZodSchema<AdminLoginInput> = object({
   password: string({
     required_error: "Password is required"
   }).nonempty().min(7, "Password must be at least 7 characters long")
-})
+});

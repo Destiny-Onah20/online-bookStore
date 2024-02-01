@@ -14,29 +14,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const email_queue_1 = require("../queues/email.queue");
 dotenv_1.default.config();
-const MailService = email_queue_1.emailQueue.process((job, done) => __awaiter(void 0, void 0, void 0, function* () {
-    const transporter = nodemailer_1.default.createTransport({
-        service: process.env.SERVICE,
-        secure: false,
-        auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD
+class mailSender {
+    static getInstance() {
+        if (!mailSender.instance) {
+            mailSender.instance = new mailSender();
         }
-    });
-    const mail = (Option) => __awaiter(void 0, void 0, void 0, function* () {
-        const mailOption = {
-            from: {
-                name: "Room",
-                address: process.env.EMAIL
-            },
-            to: Option.email,
-            subject: Option.subject,
-            text: Option.message,
-            html: Option.html
-        };
-        yield transporter.sendMail(mailOption);
-    });
-}));
-exports.default = MailService;
+        return mailSender.instance;
+    }
+    ;
+    createConnection() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.transporter = nodemailer_1.default.createTransport({
+                service: process.env.SERVICE,
+                secure: false,
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.PASSWORD
+                }
+            });
+            try {
+                yield this.transporter.verify();
+                // console.log("MailSender connection established successfully.");
+            }
+            catch (error) {
+                // console.error("Error establishing MailSender connection:", error);
+            }
+        });
+    }
+    ;
+    mail(Option) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const mailOption = {
+                from: {
+                    name: "Page",
+                    address: process.env.EMAIL
+                },
+                to: Option.email,
+                subject: Option.subject,
+                text: Option.message,
+                html: Option.html
+            };
+            // console.log(mailOption);
+            yield this.transporter.sendMail(mailOption);
+        });
+    }
+    getTransporter() {
+        return this.transporter;
+    }
+}
+exports.default = mailSender;

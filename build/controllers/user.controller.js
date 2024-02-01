@@ -18,9 +18,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const uuid_1 = require("uuid");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const mailservice_1 = __importDefault(require("../middlewares/mailservice"));
 const mailgenerator_1 = __importDefault(require("../utils/mailgenerator"));
 const generate_token_1 = require("../helpers/generate.token");
+const mailservice_1 = __importDefault(require("../middlewares/mailservice"));
 const singUpUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
@@ -78,7 +78,9 @@ const singUpUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         };
         const emailBody = mailgenerator_1.default.generate(emailContent);
         const emailText = mailgenerator_1.default.generatePlaintext(emailContent);
-        (0, mailservice_1.default)({
+        const mailService = new mailservice_1.default();
+        mailService.createConnection();
+        mailService.mail({
             from: {
                 address: process.env.EMAIL
             },

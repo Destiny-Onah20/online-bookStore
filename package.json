@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start:dist": "tsc -w",
-    "start:run": "nodemon build/server.js",
-    "start": "concurrently npm:start:*"
+    "start": "tsc && node dist/server.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "starts": "concurrently npm:start:*"
   },
   "engines": {
     "node": ">=16.x",
